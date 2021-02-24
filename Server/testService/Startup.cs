@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,20 @@ namespace testService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(option => option.AddPolicy("_AllowSpecificOrigins"
+                    , policy => policy.AllowAnyHeader()
+                        .SetIsOriginAllowed(_ => true)  //准许所有跨域
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        //.AllowAnyOrigin()
+                        //.WithMethods("GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS")
+                        //.WithOrigins(new[] { "http://localhost:8080/" }) //后续配置
+               )
+            );
+
+
+
             var connection = Configuration.GetConnectionString("DataContext");
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
             services.AddControllers();
@@ -64,6 +79,7 @@ namespace testService
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("_AllowSpecificOrigins");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -81,5 +97,7 @@ namespace testService
                 endpoints.MapControllers();
             });
         }
+
+
     }
 }
