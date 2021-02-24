@@ -1,11 +1,3 @@
-# -TestDemo
- TestDemo
-# 项目需求：
-  获取项目列表，选择（多选）项目，并把选择的项目及项目信息 发送出去
-# 技术选择
-  前端（vue）,后端（.net core 3.1），数据库(sqlserver)
-
-
 # 后端接口：
 
 # 数据设计：
@@ -50,7 +42,7 @@ Update-Database
     }
   ]
 
+
+
 接口调试：  
 https://localhost:5001/swagger/index.html
-
-# 搭建前端
