@@ -9,7 +9,7 @@
     <br/>
     <el-row :gutter="20">
       <el-col :span="8" :offset="7">
-        <el-button type="primary" @click="onSubmit" >发送邮件</el-button>
+        <el-button type="primary" @click="onSubmit" >发送邮件{{Email}}</el-button>
       </el-col>
     </el-row>
     <br/>
@@ -28,41 +28,67 @@
 </template>
 
 <script>
+  import Axios from 'axios'
   export default {
     data() {
-      const generateData = _ => {
-        const data = [];
-        const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
-        const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
-        cities.forEach((city, index) => {
-          data.push({
-            label: city,
-            key: index,
-            pinyin: pinyin[index]
-          });
-        });
-        return data;
-      };
       return {
-        cities : ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'],
-        pinyin : ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'],
-        data: generateData(),
+        data: [],
+        leftlist:[],
         RightVulue: [],
-        textarea:""
+        textarea:"",
+        Email:"Zmy@122.com"
       };
     }, 
+    mounted () {
+      this.GetLeftTab()
+    },
      methods: {
+        GetLeftTab() {
+          var leftlist=[];
+          var data=[];
+         Axios.get('https://localhost:5001/api/Tab')
+         .then(function (response) {
+          
+          if(response.status==200){
+             response.data.forEach((item,index)=>{
+              leftlist.push(item);
+              data.push({
+                label: item.repoTitle,
+                key: item.id,
+              });
+
+             })
+          }
+        })
+        .catch(function (error) {
+           alert('获取列表异常'+error);
+        })
+        this.leftlist=leftlist;
+        this.data=data;
+       }, 
       onSubmit() {
-        console.log(this.RightVulue);
-        console.log(this.cities);
-        var cities=this.cities;
         var text="";
+        var leftlist=this.leftlist;
+        var email=this.Email;
+        console.log(this.leftlist);
+        var selectdata=[];
         if(this.RightVulue.length>0){
            this.RightVulue.forEach(function(item, index) {
-             text+=cities[index]+"\r\n";
+             text+=leftlist[index].repoTitle+"\r\n"+leftlist[index].repoDesp+"\r\n"+leftlist[index].repoUrl+"\r\n\r\n";
+             var obj={
+               id:0,
+              repoTitle:leftlist[index].repoTitle,
+              repoDesp:leftlist[index].repoDesp,
+              repoUrl:leftlist[index].repoUrl,
+              sendMail:email,
+              sendTime: "2021-02-24T14:47:37.932Z"
+             }
+             selectdata.push(obj);
            })
         }
-        this.textarea=text
+        this.textarea=text;
+        //保存发送内容
+        Axios.post("https://localhost:5001/api/Tab/SaveData",selectdata).then().catch();
       }
     }
   };

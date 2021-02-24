@@ -1,19 +1,18 @@
 'use strict'
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
-
 const path = require('path')
 const debug = process.env.NODE_ENV !== 'production'
-const axInstance = axios.create({
-    baseURL: debug ? 'api' : 'http://1.3.4.5.6:89',
-    timeout: 10000,
-    responseType: 'json',
-    withCredentials: false, // 表示跨域请求时是否需要使用凭证
-    headers: {
-        token: store.state.axios.token,
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-    }
-})
+// const axInstance = axios.create({
+//     baseURL: debug ? 'api' : 'https://localhost:5001/',
+//     timeout: 10000,
+//     responseType: 'json',
+//     withCredentials: false, // 表示跨域请求时是否需要使用凭证
+//     headers: {
+//         token: store.state.axios.token,
+//         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+//     }
+// })
 module.exports = {
   dev: {
 
@@ -22,10 +21,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'https://1.2.3.4:89', // 接口地址
+        target: 'https://localhost:5001/', // 接口地址
         changeOrigin: true, // 是否跨域
         pathRewrite: {// 转发
-            '^/api': ''
+            '^/api': 'https://localhost:5001/'
         },
         secure: false 
      },
