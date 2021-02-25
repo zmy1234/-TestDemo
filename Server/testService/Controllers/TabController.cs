@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using testService.Model;
+using testService.View;
 
 namespace testService.Controllers
 {
@@ -101,6 +102,28 @@ namespace testService.Controllers
         public async Task<ActionResult<int>> SaveData(List<RightTab> RightTabs)
         {
             
+            await _context.RightTabs.AddRangeAsync(RightTabs);
+            return await _context.SaveChangesAsync();
+        }
+        [HttpPost("SaveSelectData")]
+        public async Task<ActionResult<int>> SaveSelectData(SaveDataDto dto)
+        {
+            List<RightTab> RightTabs = new List<RightTab>();
+            if (dto != null)
+            {
+                var lefts=_context.LeftTabs.Where(a => dto.LeftTabIds.Contains(a.Id));
+                if (lefts.Any())
+                {
+                    RightTabs = lefts.Select(a => new RightTab()
+                    {
+                        RepoTitle=a.RepoTitle,
+                        RepoDesp=a.RepoDesp,
+                        RepoUrl=a.RepoUrl,
+                        SendMail=dto.SendEmail,
+                        SendTime=DateTime.Now
+                    }).ToList();
+                }
+            }
             await _context.RightTabs.AddRangeAsync(RightTabs);
             return await _context.SaveChangesAsync();
         }
